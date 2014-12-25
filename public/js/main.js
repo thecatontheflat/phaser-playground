@@ -37,23 +37,14 @@ Z.walkingSquare = {
                     self.x += newX;
                 }
 
-                if (self.isTopBorder(newY)) {
+                if (self.isTopBorder(newY) && !self.isTopCollision()) {
                     self.y += newY;
                 }
 
-                if (self.isBottomBorder(newY)) {
+                if (self.isBottomBorder(newY) && !self.isBottomCollision()) {
                     self.y += newY;
                 }
             },
-
-            //checkCollisions: function () {
-            //    var self = this;
-            //
-            //    var imgData = self.ctx.getImageData(self.x, self.y, 1, 1).data;
-            //    console.log('r', imgData[0]);
-            //    console.log('g', imgData[1]);
-            //    console.log('b', imgData[2]);
-            //},
 
             redraw: function () {
                 var self = this;
@@ -70,6 +61,20 @@ Z.walkingSquare = {
             isRightCollision: function () {
                 var self = this;
                 var rgb = self.ctx.getImageData(self.x + self.size + 5, self.y, 1, 1).data;
+
+                return !(rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0);
+            },
+
+            isTopCollision: function () {
+                var self = this;
+                var rgb = self.ctx.getImageData(self.x, self.y - 5, 1, 1).data;
+
+                return !(rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0);
+            },
+
+            isBottomCollision: function () {
+                var self = this;
+                var rgb = self.ctx.getImageData(self.x, self.y + self.size + 5, 1, 1).data;
 
                 return !(rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0);
             },
@@ -107,17 +112,20 @@ Z.drawer = {
 
     init: function () {
         this.initField();
-        var square1 = Z.walkingSquare.create(this.field, 50, 50);
-        var square2 = Z.walkingSquare.create(this.field, 0, 0);
+        var square1 = Z.walkingSquare.create(this.field, 0, 0);
+        var square2 = Z.walkingSquare.create(this.field, 100, 0);
         var square3 = Z.walkingSquare.create(this.field, 0, 100);
+        var square4 = Z.walkingSquare.create(this.field, 100, 100);
 
         square1.draw();
         square2.draw();
         square3.draw();
+        square4.draw();
 
         this.squares.push(square1);
         this.squares.push(square2);
         this.squares.push(square3);
+        this.squares.push(square4);
     },
 
     redraw: function () {
