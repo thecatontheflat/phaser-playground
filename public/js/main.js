@@ -1,8 +1,6 @@
 var Z = Z || {};
 
 Z.walkingSquare = {
-    x: 0,
-    y: 0,
     fillStyle: "rgb(200,0,0)",
     size: 50,
 
@@ -35,7 +33,7 @@ Z.walkingSquare = {
                     self.x += newX;
                 }
 
-                if (self.isRightBorder()) {
+                if (self.isRightBorder(newX)) {
                     self.x += newX;
                 }
 
