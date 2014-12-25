@@ -6,13 +6,15 @@ Z.walkingSquare = {
     fillStyle: "rgb(200,0,0)",
     size: 50,
 
-    create: function (ctx, x, y) {
+    create: function (field, x, y) {
         return {
             x: x,
             y: y,
             size: this.size,
             fillStyle: this.fillStyle,
-            ctx: ctx,
+            ctx: field.ctx,
+            fieldWidth: field.width,
+            fieldHeight: field.height,
 
             draw: function () {
                 var self = this;
@@ -34,7 +36,7 @@ Z.walkingSquare = {
                 }
 
                 // Check right border
-                if (newX > 0 && self.x + 50 + newX != 150) {
+                if (newX > 0 && self.x + self.size + newX != self.fieldWidth) {
                     self.x += newX;
                 }
 
@@ -44,7 +46,7 @@ Z.walkingSquare = {
                 }
 
                 // Check bottom border
-                if (newY > 0 && self.y + 50 + newY != 150) {
+                if (newY > 0 && self.y + self.size + newY != self.fieldHeight) {
                     self.y += newY;
                 }
 
@@ -56,12 +58,15 @@ Z.walkingSquare = {
 
 Z.drawer = {
     squares: [],
-    canvasWidth: 150,
-    canvasHeight: 150,
+    field: {
+        width: 150,
+        height: 150,
+        ctx: ''
+    },
 
     init: function () {
-        var ctx = this.ctx();
-        var square = Z.walkingSquare.create(ctx, 0, 0);
+        this.initField();
+        var square = Z.walkingSquare.create(this.field, 0, 0);
 
         square.draw();
 
@@ -77,11 +82,10 @@ Z.drawer = {
     },
 
     clearCanvas: function () {
-        var ctx = this.ctx();
-        ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.field.ctx.clearRect(0, 0, this.field.width, this.field.height);
     },
 
-    ctx: function () {
-        return document.getElementById('canvas').getContext('2d');
+    initField: function () {
+        this.field.ctx = document.getElementById('canvas').getContext('2d');
     }
 };
