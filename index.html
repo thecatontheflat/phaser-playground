@@ -3,10 +3,21 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Blah</title>
-    <style rel="public/css/main.css"></style>
+
+    <link rel="stylesheet" href="public/css/main.css">
+
     <script src="public/js/main.js"></script>
 </head>
 <body>
 
+<canvas id="canvas" width="150" height="150"></canvas>
+
+<script>
+    (function() {
+        window.setInterval(function () {
+            Z.drawer.draw();
+        }, 100);
+    })();
+</script>
 </body>
 </html>
