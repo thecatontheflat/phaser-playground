@@ -15,15 +15,23 @@ Z.drawer = {
         var newX = Math.round(Math.random()) * plusOrMinus;
         var newY = Math.round(Math.random()) * plusOrMinus;
 
+        // Check left border
         if (newX < 0 && this.x - newX != 0) {
-            this.x += newX;
-        } else if (newX > 0) {
             this.x += newX;
         }
 
+        // Check right border
+        if (newX > 0 && this.x + 50 + newX != 150) {
+            this.x += newX;
+        }
+
+        // Check top border
         if (newY < 0 && this.y - newY != 0) {
             this.y += newY;
-        } else if (newY > 0) {
+        }
+
+        // Check bottom border
+        if (newY > 0 && this.y + 50 + newY != 150) {
             this.y += newY;
         }
     },
