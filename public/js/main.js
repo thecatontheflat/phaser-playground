@@ -2,7 +2,7 @@ var Z = Z || {};
 
 Z.walkingSquare = {
     fillStyle: "rgb(200,0,0)",
-    size: 50,
+    size: 40,
 
     create: function (field, x, y) {
         return {
