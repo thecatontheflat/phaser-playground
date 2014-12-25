@@ -15,6 +15,7 @@ Z.walkingSquare = {
             ctx: field.ctx,
             fieldWidth: field.width,
             fieldHeight: field.height,
+            redrawCounter: 0,
 
             draw: function () {
                 var self = this;
@@ -30,27 +31,43 @@ Z.walkingSquare = {
                 var newX = Math.round(Math.random()) * plusOrMinus;
                 var newY = Math.round(Math.random()) * plusOrMinus;
 
-                // Check left border
-                if (newX < 0 && self.x - newX != 0) {
+                if (self.isLeftBorder(newX)) {
                     self.x += newX;
                 }
 
-                // Check right border
-                if (newX > 0 && self.x + self.size + newX != self.fieldWidth) {
+                if (self.isRightBorder()) {
                     self.x += newX;
                 }
 
-                // Check top border
-                if (newY < 0 && self.y - newY != 0) {
+                if (self.isTopBorder(newY)) {
                     self.y += newY;
                 }
 
-                // Check bottom border
-                if (newY > 0 && self.y + self.size + newY != self.fieldHeight) {
+                if (self.isBottomBorder(newY)) {
                     self.y += newY;
                 }
 
                 self.draw();
+            },
+
+            isLeftBorder: function (x) {
+                var self = this;
+                return x < 0 && self.x - x != 0;
+            },
+
+            isRightBorder: function (x) {
+                var self = this;
+                return x > 0 && self.x + self.size + x != self.fieldWidth;
+            },
+
+            isTopBorder: function (y) {
+                var self = this;
+                return y < 0 && self.y - y != 0;
+            },
+
+            isBottomBorder: function (y) {
+                var self = this;
+                return y > 0 && self.y + self.size + y != self.fieldHeight;
             }
         };
     }
@@ -66,11 +83,14 @@ Z.drawer = {
 
     init: function () {
         this.initField();
-        var square = Z.walkingSquare.create(this.field, 0, 0);
+        var square1 = Z.walkingSquare.create(this.field, 50, 25);
+        //var square2 = Z.walkingSquare.create(this.field, 0, 0);
 
-        square.draw();
+        square1.draw();
+        //square2.draw();
 
-        this.squares.push(square);
+        this.squares.push(square1);
+        //this.squares.push(square2);
     },
 
     redraw: function () {
