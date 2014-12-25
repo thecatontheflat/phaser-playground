@@ -105,27 +105,36 @@ Z.walkingSquare = {
 Z.drawer = {
     squares: [],
     field: {
-        width: 150,
-        height: 150,
+        width: 500,
+        height: 500,
         ctx: ''
     },
 
     init: function () {
         this.initField();
-        var square1 = Z.walkingSquare.create(this.field, 0, 0);
-        var square2 = Z.walkingSquare.create(this.field, 100, 0);
-        var square3 = Z.walkingSquare.create(this.field, 0, 100);
-        var square4 = Z.walkingSquare.create(this.field, 100, 100);
 
-        square1.draw();
-        square2.draw();
-        square3.draw();
-        square4.draw();
+        for (var i = 0; i < 10; i++) {
+            var x = 50 * i;
+            var y = 50 * i;
+            var square = Z.walkingSquare.create(this.field, x, y);
+            square.draw();
+            this.squares.push(square);
+        }
 
-        this.squares.push(square1);
-        this.squares.push(square2);
-        this.squares.push(square3);
-        this.squares.push(square4);
+        //var square1 = Z.walkingSquare.create(this.field, 0, 0);
+        //var square2 = Z.walkingSquare.create(this.field, 100, 0);
+        //var square3 = Z.walkingSquare.create(this.field, 0, 100);
+        //var square4 = Z.walkingSquare.create(this.field, 100, 100);
+        //
+        //square1.draw();
+        //square2.draw();
+        //square3.draw();
+        //square4.draw();
+        //
+        //this.squares.push(square1);
+        //this.squares.push(square2);
+        //this.squares.push(square3);
+        //this.squares.push(square4);
     },
 
     redraw: function () {
