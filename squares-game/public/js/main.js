@@ -4,6 +4,8 @@ Z.game = {
     objects: [],
     field: {},
     keysDown: {},
+    now: Date.now(),
+    then: Date.now(),
 
     initField: function () {
         this.field.ctx = document.getElementById('canvas').getContext('2d');
@@ -13,18 +15,11 @@ Z.game = {
 
     loopCallback: function () {
         var self = this;
-        var now = Date.now();
-        var then = Date.now();
-        var delta = 0;
 
         return function () {
-            now = Date.now();
-            delta = (now - then) / 1000;
             //handleInput();
-            self.recalculateWorld(delta);
+            self.recalculateWorld();
             self.render();
-
-            then = now;
         };
     },
 
@@ -32,21 +27,26 @@ Z.game = {
         this.field.ctx.clearRect(0, 0, this.field.width, this.field.height);
     },
 
-    recalculateWorld: function (delta) {
+    recalculateWorld: function () {
+        this.now = Date.now();
+        var timeDelta = (this.now - this.then) / 1000;
+
         var player = this.objects[0];
 
         if (38 in this.keysDown) { // Player holding up
-            player.y -= player.speed * player.speed * delta;
+            player.y -= player.speed * player.speed * timeDelta;
         }
         if (40 in this.keysDown) { // Player holding down
-            player.y += player.speed * player.speed * delta;
+            player.y += player.speed * player.speed * timeDelta;
         }
         if (37 in this.keysDown) { // Player holding left
-            player.x -= player.speed * player.speed * delta;
+            player.x -= player.speed * player.speed * timeDelta;
         }
         if (39 in this.keysDown) { // Player holding right
-            player.x += player.speed * player.speed * delta;
+            player.x += player.speed * player.speed * timeDelta;
         }
+
+        this.then = this.now;
     },
 
     render: function () {
