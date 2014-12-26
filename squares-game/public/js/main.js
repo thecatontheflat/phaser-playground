@@ -32,19 +32,7 @@ Z.game = {
         var timeDelta = (this.now - this.then) / 1000;
 
         var player = this.objects[0];
-
-        if (38 in this.keysDown) { // Player holding up
-            player.y -= player.speed * player.speed * timeDelta;
-        }
-        if (40 in this.keysDown) { // Player holding down
-            player.y += player.speed * player.speed * timeDelta;
-        }
-        if (37 in this.keysDown) { // Player holding left
-            player.x -= player.speed * player.speed * timeDelta;
-        }
-        if (39 in this.keysDown) { // Player holding right
-            player.x += player.speed * player.speed * timeDelta;
-        }
+        player.recalculatePosition(timeDelta);
 
         this.then = this.now;
     },
@@ -96,6 +84,21 @@ Z.player = {
             draw: function () {
                 ctx.fillStyle = fillStyle;
                 ctx.fillRect(this.x, this.y, this.size, this.size);
+            },
+
+            recalculatePosition: function (timeDelta) {
+                if (38 in Z.game.keysDown) { // Player holding up
+                    this.y -= this.speed * this.speed * timeDelta;
+                }
+                if (40 in Z.game.keysDown) { // Player holding down
+                    this.y += this.speed * this.speed * timeDelta;
+                }
+                if (37 in Z.game.keysDown) { // Player holding left
+                    this.x -= this.speed * this.speed * timeDelta;
+                }
+                if (39 in Z.game.keysDown) { // Player holding right
+                    this.x += this.speed * this.speed * timeDelta;
+                }
             }
         };
     }
