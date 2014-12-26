@@ -90,6 +90,7 @@ Z.player = {
             size: boxSize,
             ctx: ctx,
             field: field,
+            direction: undefined,
 
             draw: function () {
                 ctx.fillStyle = fillStyle;
@@ -98,7 +99,8 @@ Z.player = {
 
             listenInput: function () {
                 if (Z.codes.space in Z.game.keysDown) {
-                    var missile = Z.projectile.create(this.field, this.x, this.y);
+                    var missile = Z.projectile.create(this.field, this.x, this.y, this.direction);
+
                     Z.game.attachObject(missile);
                 }
             },
@@ -106,15 +108,19 @@ Z.player = {
             recalculatePosition: function (timeDelta) {
                 if (Z.codes.up in Z.game.keysDown) {
                     this.y -= this.speed * this.speed * timeDelta;
+                    this.direction = Z.codes.up;
                 }
                 if (Z.codes.down in Z.game.keysDown) {
                     this.y += this.speed * this.speed * timeDelta;
+                    this.direction = Z.codes.down;
                 }
                 if (Z.codes.left in Z.game.keysDown) {
                     this.x -= this.speed * this.speed * timeDelta;
+                    this.direction = Z.codes.left;
                 }
                 if (Z.codes.right in Z.game.keysDown) {
                     this.x += this.speed * this.speed * timeDelta;
+                    this.direction = Z.codes.right;
                 }
             }
         };
@@ -122,7 +128,7 @@ Z.player = {
 };
 
 Z.projectile = {
-    create: function (field, x, y) {
+    create: function (field, x, y, direction) {
         var speed = 20; //pixels per second
         var boxSize = 5;
         var ctx = field.ctx;
@@ -134,6 +140,7 @@ Z.projectile = {
             speed: speed,
             size: boxSize,
             ctx: ctx,
+            direction: direction,
 
             draw: function () {
                 ctx.fillStyle = fillStyle;
@@ -141,7 +148,18 @@ Z.projectile = {
             },
 
             recalculatePosition: function (timeDelta) {
-                this.y += this.speed * this.speed * timeDelta;
+                if (Z.codes.up == this.direction) {
+                    this.y -= this.speed * this.speed * timeDelta;
+                }
+                if (Z.codes.down == this.direction) {
+                    this.y += this.speed * this.speed * timeDelta;
+                }
+                if (Z.codes.left == this.direction) {
+                    this.x -= this.speed * this.speed * timeDelta;
+                }
+                if (Z.codes.right == this.direction) {
+                    this.x += this.speed * this.speed * timeDelta;
+                }
             },
 
             listenInput: function () {
