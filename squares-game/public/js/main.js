@@ -65,6 +65,8 @@ Z.game = {
 
         this.initField();
         var player = Z.player.create(this.field);
+        player.init();
+
         var projectile = Z.projectile.create(this.field);
 
         this.objects.push(player);
@@ -91,6 +93,17 @@ Z.player = {
             ctx: ctx,
             field: field,
             direction: undefined,
+            ammo: 0,
+
+            init: function () {
+                var self = this;
+                var updateAmmo = function () {
+                    self.ammo += 10;
+                    console.log(self.ammo);
+                };
+
+                setInterval(updateAmmo, 1000);
+            },
 
             draw: function () {
                 ctx.fillStyle = fillStyle;
@@ -102,9 +115,13 @@ Z.player = {
                 var midY = this.y + (this.size / 2);
 
                 if (Z.codes.space in Z.game.keysDown) {
-                    var missile = Z.projectile.create(this.field, midX, midY, this.direction);
+                    if (this.ammo > 0) {
+                        var missile = Z.projectile.create(this.field, midX, midY, this.direction);
 
-                    Z.game.attachObject(missile);
+                        Z.game.attachObject(missile);
+
+                        this.ammo--;
+                    }
                 }
             },
 
