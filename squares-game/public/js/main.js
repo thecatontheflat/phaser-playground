@@ -13,11 +13,15 @@ Z.game = {
         this.field.height = 500;
     },
 
+    attachObject: function (object) {
+        this.objects.push(object);
+    },
+
     loopCallback: function () {
         var self = this;
 
         return function () {
-            //handleInput();
+            //self.listenInput();
             self.recalculateWorld();
             self.render();
         };
@@ -31,8 +35,11 @@ Z.game = {
         this.now = Date.now();
         var timeDelta = (this.now - this.then) / 1000;
 
-        var player = this.objects[0];
-        player.recalculatePosition(timeDelta);
+        for (var i = 0; i < this.objects.length; i++) {
+            var object = this.objects[i];
+            object.listenInput();
+            object.recalculatePosition(timeDelta);
+        }
 
         this.then = this.now;
     },
@@ -58,8 +65,10 @@ Z.game = {
 
         this.initField();
         var player = Z.player.create(this.field);
+        var projectile = Z.projectile.create(this.field);
 
         this.objects.push(player);
+        this.objects.push(projectile);
 
         window.setInterval(this.loopCallback(), 1);
     }
@@ -80,6 +89,51 @@ Z.player = {
             speed: speed,
             size: boxSize,
             ctx: ctx,
+            field: field,
+
+            draw: function () {
+                ctx.fillStyle = fillStyle;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            },
+
+            listenInput: function () {
+                if (Z.codes.space in Z.game.keysDown) {
+                    var missile = Z.projectile.create(this.field, this.x, this.y);
+                    Z.game.attachObject(missile);
+                }
+            },
+
+            recalculatePosition: function (timeDelta) {
+                if (Z.codes.up in Z.game.keysDown) {
+                    this.y -= this.speed * this.speed * timeDelta;
+                }
+                if (Z.codes.down in Z.game.keysDown) {
+                    this.y += this.speed * this.speed * timeDelta;
+                }
+                if (Z.codes.left in Z.game.keysDown) {
+                    this.x -= this.speed * this.speed * timeDelta;
+                }
+                if (Z.codes.right in Z.game.keysDown) {
+                    this.x += this.speed * this.speed * timeDelta;
+                }
+            }
+        };
+    }
+};
+
+Z.projectile = {
+    create: function (field, x, y) {
+        var speed = 20; //pixels per second
+        var boxSize = 5;
+        var ctx = field.ctx;
+        var fillStyle = "rgb(200,200,0)";
+
+        return {
+            x: x,
+            y: y,
+            speed: speed,
+            size: boxSize,
+            ctx: ctx,
 
             draw: function () {
                 ctx.fillStyle = fillStyle;
@@ -87,19 +141,19 @@ Z.player = {
             },
 
             recalculatePosition: function (timeDelta) {
-                if (38 in Z.game.keysDown) { // Player holding up
-                    this.y -= this.speed * this.speed * timeDelta;
-                }
-                if (40 in Z.game.keysDown) { // Player holding down
-                    this.y += this.speed * this.speed * timeDelta;
-                }
-                if (37 in Z.game.keysDown) { // Player holding left
-                    this.x -= this.speed * this.speed * timeDelta;
-                }
-                if (39 in Z.game.keysDown) { // Player holding right
-                    this.x += this.speed * this.speed * timeDelta;
-                }
+                this.y += this.speed * this.speed * timeDelta;
+            },
+
+            listenInput: function () {
             }
         };
     }
+};
+
+Z.codes = {
+    space: 32,
+    up: 38,
+    down: 40,
+    left: 37,
+    right: 39
 };
