@@ -98,8 +98,11 @@ Z.player = {
             },
 
             listenInput: function () {
+                var midX = this.x + (this.size / 2);
+                var midY = this.y + (this.size / 2);
+
                 if (Z.codes.space in Z.game.keysDown) {
-                    var missile = Z.projectile.create(this.field, this.x, this.y, this.direction);
+                    var missile = Z.projectile.create(this.field, midX, midY, this.direction);
 
                     Z.game.attachObject(missile);
                 }
@@ -132,7 +135,7 @@ Z.projectile = {
         var speed = 20; //pixels per second
         var boxSize = 5;
         var ctx = field.ctx;
-        var fillStyle = "rgb(200,200,0)";
+        var fillStyle = "rgb(200,200,200)";
 
         return {
             x: x,
