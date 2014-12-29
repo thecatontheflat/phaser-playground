@@ -68,7 +68,6 @@ var server = app.listen(process.env.PORT || 3000, function () {
 var io = require('socket.io').listen(server);
 
 
-var objects = [];
 var counter = 0;
 var spawnObject = function () {
     counter++;
@@ -82,48 +81,29 @@ var spawnObject = function () {
         return "rgb(" + color.join(',') + ")";
     };
 
+    var getRandomInRange = function getRandomArbitrary (min, max) {
+        return Math.random() * (max - min) + min;
+    };
+
     return {
         id: counter,
         x: 0, y: 0,
         toX: 0, toY: 0,
-        size: 40,
+        size: getRandomInRange(20, 40),
         fillStyle: generateRandomColor()
     };
 };
 
 var Game = {
+    speed: 3,
     objects: []
 };
+
 
 io.sockets.on('connection', function (client) {
     var object = spawnObject();
     client['object_id'] = object.id;
     Game.objects[object.id] = object;
-    var speed = 3;
-
-    var serverLoop = function () {
-        Game.objects.forEach(function (object) {
-            if (object.x < object.toX) {
-                object.x += speed;
-            }
-
-            if (object.x > object.toX) {
-                object.x -= speed;
-            }
-
-            if (object.y < object.toY) {
-                object.y += speed;
-            }
-
-            if (object.y > object.toY) {
-                object.y -= speed;
-            }
-        });
-
-        client.volatile.emit('render', Game.objects);
-    };
-
-    setInterval(serverLoop, 60);
 
     client.on('move', function (data) {
         Game.objects[client['object_id']].toX = data.x;
@@ -141,6 +121,35 @@ io.sockets.on('connection', function (client) {
         Game.objects = newObjects;
     });
 });
+
+var serverLoop = function () {
+    var updateRequired = false;
+    Game.objects.forEach(function (object) {
+        if (object.x < object.toX) {
+            object.x += Game.speed;
+        }
+
+        if (object.x > object.toX) {
+            object.x -= Game.speed;
+        }
+
+        if (object.y < object.toY) {
+            object.y += Game.speed;
+        }
+
+        if (object.y > object.toY) {
+            object.y -= Game.speed;
+        }
+
+        updateRequired = true;
+    });
+
+    if (updateRequired) {
+        io.emit('render', Game.objects);
+    }
+};
+
+setInterval(serverLoop, 60);
 
 
 module.exports = app;
