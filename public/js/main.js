@@ -48,8 +48,6 @@ Z.game = {
 
             var canvas = document.getElementById("canvas");
 
-            //x -= canvas.offsetLeft;
-            //y -= canvas.offsetTop;
             var coords = {x: x, y: y};
             socket.emit('move', coords);
         }, false);

@@ -73,22 +73,23 @@ var coordsTo = {x: 0, y: 0};
 io.sockets.on('connection', function (client) {
     coords.x = 0;
     coords.y = 0;
+    var speed = 3;
 
     setInterval(function () {
         if (coords.x < coordsTo.x) {
-            coords.x++;
+            coords.x += speed;
         }
 
         if (coords.x > coordsTo.x) {
-            coords.x--;
+            coords.x -= speed;
         }
 
         if (coords.y < coordsTo.y) {
-            coords.y++;
+            coords.y += speed;
         }
 
         if (coords.y > coordsTo.y) {
-            coords.y--;
+            coords.y -= speed;
         }
 
         client.volatile.emit('render', coords);
