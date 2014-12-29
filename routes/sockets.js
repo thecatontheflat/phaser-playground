@@ -13,14 +13,7 @@ module.exports = function (io) {
         });
 
         client.on('disconnect', function () {
-            var newObjects = [];
-            Game.objects.forEach(function (object) {
-                if (object.id != client['object_id']) {
-                    newObjects[object.id] = object;
-                }
-            });
-
-            Game.objects = newObjects;
+            Game.disconnect(client);
         });
     });
 

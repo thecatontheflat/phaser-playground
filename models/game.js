@@ -28,6 +28,17 @@ module.exports = function (io) {
             if (updateRequired) {
                 io.emit('render', Game.objects);
             }
+        },
+
+        disconnect: function(client) {
+            var newObjects = [];
+            this.objects.forEach(function (object) {
+                if (object.id != client['object_id']) {
+                    newObjects[object.id] = object;
+                }
+            });
+
+            this.objects = newObjects;
         }
     };
 
