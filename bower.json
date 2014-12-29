@@ -1,0 +1,13 @@
+{
+  "name": "canvas-playground",
+  "version": "0.0.0",
+  "homepage": "https://github.com/thecatontheflat/canvas-playground",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
