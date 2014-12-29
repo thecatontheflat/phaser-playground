@@ -4,6 +4,7 @@ var GameObjectPrototype = {
     toX: 1, toY: 1,
     size: undefined,
     fillStyle: undefined,
+    speed: undefined,
 
     getCenterCoords: function () {
         return {
@@ -51,6 +52,7 @@ module.exports = {
         var object = Object.create(GameObjectPrototype);
         object.id = this.counter;
         object.size = this.getRandomNumberInRange(20, 40);
+        object.speed = this.getRandomNumberInRange(3, 10);
         object.fillStyle = this.generateRandomFillStyle();
 
         return object;

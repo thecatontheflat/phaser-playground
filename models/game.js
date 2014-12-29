@@ -1,6 +1,6 @@
 module.exports = function (io) {
     var Game = {
-        speed: 3,
+        pace: 1,
         objects: [],
         updateRequired: false,
 
@@ -19,19 +19,19 @@ module.exports = function (io) {
         getRecalculatePositionCallback: function() {
             return function (object) {
                 if (object.getCenterCoords().x < object.toX) {
-                    object.x += Game.speed;
+                    object.x += object.speed;
                 }
 
                 if (object.getCenterCoords().x > object.toX) {
-                    object.x -= Game.speed;
+                    object.x -= object.speed;
                 }
 
                 if (object.getCenterCoords().y < object.toY) {
-                    object.y += Game.speed;
+                    object.y += object.speed;
                 }
 
                 if (object.getCenterCoords().y > object.toY) {
-                    object.y -= Game.speed;
+                    object.y -= object.speed;
                 }
 
                 Game.updateRequired = true;
