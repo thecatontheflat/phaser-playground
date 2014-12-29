@@ -7,6 +7,14 @@ module.exports = function (io) {
             this.objects[object.id] = object;
         },
 
+        moveObject: function (client, to) {
+            var id = client['object_id'];
+            var object = Game.objects[id];
+
+            object.toX = to.x;
+            object.toY = to.y;
+        },
+
         serverLoop: function () {
             var updateRequired = false;
             Game.objects.forEach(function (object) {
@@ -34,7 +42,7 @@ module.exports = function (io) {
             }
         },
 
-        disconnect: function(client) {
+        disconnect: function (client) {
             var newObjects = [];
             this.objects.forEach(function (object) {
                 if (object.id != client['object_id']) {
