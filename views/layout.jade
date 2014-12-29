@@ -1,7 +1,14 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+    head(lang='en')
+        meta(charset='UTF-8')
+        title Squares Game
+        link(rel='stylesheet', href='/css/main.css')
+        script(src='/js/main.js')
+        script(src='/socket.io/socket.io.js')
+    body
+        canvas#canvas(width='500', height='500')
+        script.
+            (function () {
+                Z.game.init();
+            })();
