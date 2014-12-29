@@ -6,6 +6,8 @@ module.exports = function (io) {
         var object = ObjectFactory.spawn(client);
         Game.attachObject(object);
 
+        client['object_id'] = object.id;
+
         client.on('move', function (to) {
             Game.moveObject(client, to);
         });
