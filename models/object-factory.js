@@ -1,7 +1,13 @@
 var GameObjectPrototype = {
+    x: 55, y: 55,
+    toX: 55, toY: 55,
+    boundingBox: 10,
+    field: {
+        height: 500,
+        widgth: 500
+    },
+
     id: undefined,
-    x: 0, y: 0,
-    toX: 1, toY: 1,
     size: undefined,
     fillStyle: undefined,
     speed: undefined,
@@ -43,6 +49,22 @@ var GameObjectPrototype = {
 
     toRight: function () {
         return this.getCenterCoords().x < this.toX;
+    },
+
+    canUp: function () {
+        return this.getTopY() - this.boundingBox > 0;
+    },
+
+    canDown: function () {
+        return this.getBottomY() + this.boundingBox > this.field.height;
+    },
+
+    canRight: function () {
+        return this.getRightX() + this.boundingBox > this.field.widgth;
+    },
+
+    canLeft: function () {
+        return this.getLeftX() - this.boundingBox > 0;
     },
 
     move: function () {
