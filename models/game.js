@@ -18,22 +18,7 @@ module.exports = function (io) {
 
         getRecalculatePositionCallback: function() {
             return function (object) {
-                if (object.getCenterCoords().x < object.toX) {
-                    object.x += object.speed;
-                }
-
-                if (object.getCenterCoords().x > object.toX) {
-                    object.x -= object.speed;
-                }
-
-                if (object.getCenterCoords().y < object.toY) {
-                    object.y += object.speed;
-                }
-
-                if (object.getCenterCoords().y > object.toY) {
-                    object.y -= object.speed;
-                }
-
+                object.move();
                 Game.updateRequired = true;
             };
         },

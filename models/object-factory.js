@@ -27,6 +27,40 @@ var GameObjectPrototype = {
 
     getBottomY: function () {
         return this.y + this.size;
+    },
+
+    toUp: function () {
+        return this.getCenterCoords().y < this.toY;
+    },
+
+    toDown: function () {
+        return this.getCenterCoords().y > this.toY;
+    },
+
+    toLeft: function () {
+        return this.getCenterCoords().x > this.toX;
+    },
+
+    toRight: function () {
+        return this.getCenterCoords().x < this.toX;
+    },
+
+    move: function () {
+        if (this.toRight()) {
+            this.x += this.speed;
+        }
+
+        if (this.toLeft()) {
+            this.x -= this.speed;
+        }
+
+        if (this.toUp()) {
+            this.y += this.speed;
+        }
+
+        if (this.toDown()) {
+            this.y -= this.speed;
+        }
     }
 };
 
