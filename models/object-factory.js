@@ -3,7 +3,14 @@ var GameObjectPrototype = {
     x: 0, y: 0,
     toX: 1, toY: 1,
     size: undefined,
-    fillStyle: undefined
+    fillStyle: undefined,
+
+    getCenterCoords: function () {
+        return {
+            x: this.x + this.size / 2,
+            y: this.y + this.size / 2
+        };
+    }
 };
 
 module.exports = {

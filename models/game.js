@@ -18,19 +18,19 @@ module.exports = function (io) {
         serverLoop: function () {
             var updateRequired = false;
             Game.objects.forEach(function (object) {
-                if (object.x < object.toX) {
+                if (object.getCenterCoords().x < object.toX) {
                     object.x += Game.speed;
                 }
 
-                if (object.x > object.toX) {
+                if (object.getCenterCoords().x > object.toX) {
                     object.x -= Game.speed;
                 }
 
-                if (object.y < object.toY) {
+                if (object.getCenterCoords().y < object.toY) {
                     object.y += Game.speed;
                 }
 
-                if (object.y > object.toY) {
+                if (object.getCenterCoords().y > object.toY) {
                     object.y -= Game.speed;
                 }
 
