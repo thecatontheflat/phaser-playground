@@ -1,3 +1,5 @@
+var Game = require('../models/game');
+
 module.exports = function (io) {
     var counter = 0;
     var spawnObject = function () {
@@ -24,12 +26,6 @@ module.exports = function (io) {
             fillStyle: generateRandomColor()
         };
     };
-
-    var Game = {
-        speed: 3,
-        objects: []
-    };
-
 
     io.sockets.on('connection', function (client) {
         var object = spawnObject();
