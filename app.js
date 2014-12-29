@@ -67,15 +67,38 @@ var server = app.listen(3000, function () {
 
 var io = require('socket.io').listen(server);
 
+
 var coords = {x: 0, y: 0};
+var coordsTo = {x: 0, y: 0};
 io.sockets.on('connection', function (client) {
     coords.x = 0;
     coords.y = 0;
+
     setInterval(function () {
-        coords.x++;
-        coords.y++;
+        if (coords.x < coordsTo.x) {
+            coords.x++;
+        }
+
+        if (coords.x > coordsTo.x) {
+            coords.x--;
+        }
+
+        if (coords.y < coordsTo.y) {
+            coords.y++;
+        }
+
+        if (coords.y > coordsTo.y) {
+            coords.y--;
+        }
+
         client.volatile.emit('render', coords);
     }, 60);
+
+    client.on('move', function (data) {
+        coordsTo.x = data.x;
+        coordsTo.y = data.y;
+    });
 });
+
 
 module.exports = app;
