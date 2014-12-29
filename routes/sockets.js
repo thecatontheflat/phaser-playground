@@ -1,7 +1,7 @@
-var Game = require('../models/game');
-var ObjectFactory = require('../models/object-factory');
-
 module.exports = function (io) {
+    var Game = require('../models/game')(io);
+    var ObjectFactory = require('../models/object-factory');
+
     io.sockets.on('connection', function (client) {
         var object = ObjectFactory.create();
         client['object_id'] = object.id;
@@ -24,32 +24,5 @@ module.exports = function (io) {
         });
     });
 
-    var serverLoop = function () {
-        var updateRequired = false;
-        Game.objects.forEach(function (object) {
-            if (object.x < object.toX) {
-                object.x += Game.speed;
-            }
-
-            if (object.x > object.toX) {
-                object.x -= Game.speed;
-            }
-
-            if (object.y < object.toY) {
-                object.y += Game.speed;
-            }
-
-            if (object.y > object.toY) {
-                object.y -= Game.speed;
-            }
-
-            updateRequired = true;
-        });
-
-        if (updateRequired) {
-            io.emit('render', Game.objects);
-        }
-    };
-
-    setInterval(serverLoop, 60);
+    setInterval(Game.serverLoop, 60);
 };
