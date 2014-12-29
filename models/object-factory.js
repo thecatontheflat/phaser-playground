@@ -22,13 +22,15 @@ module.exports = {
         return Math.random() * (max - min) + min;
     },
 
-    create: function () {
+    spawn: function (client) {
         this.counter++;
 
         var object = Object.create(GameObjectPrototype);
         object.id = this.counter;
         object.size = this.getRandomNumberInRange(20, 40);
         object.fillStyle = this.generateRandomFillStyle();
+
+        client['object_id'] = object.id;
 
         return object;
     }

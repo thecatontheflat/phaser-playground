@@ -3,6 +3,10 @@ module.exports = function (io) {
         speed: 3,
         objects: [],
 
+        attachObject: function (object) {
+            this.objects[object.id] = object;
+        },
+
         serverLoop: function () {
             var updateRequired = false;
             Game.objects.forEach(function (object) {
