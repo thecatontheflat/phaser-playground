@@ -55,19 +55,32 @@ Z.game = {
         var player = Z.player.create(this.field);
         player.init();
 
-        this.objects.push(player);
+        //this.objects.push(player);
         this.loopCallback()();
 
         //window.setInterval(this.loopCallback(), 1);
 
         var socket = io.connect();
-
         socket.on('render', function (data) {
-            player.x = data.x;
-            player.y = data.y;
-
+            self.objects[0] = Z.object.create(self.field.ctx, data);
             self.loopCallback()();
         });
+    }
+};
+
+Z.object = {
+    create: function (ctx, object) {
+        return {
+            x: object.x,
+            y: object.y,
+            size: object.size,
+            ctx: ctx,
+
+            draw: function () {
+                this.ctx.fillStyle = this.fillStyle;
+                this.ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        };
     }
 };
 

@@ -70,29 +70,39 @@ var io = require('socket.io').listen(server);
 
 var coords = {x: 0, y: 0};
 var coordsTo = {x: 0, y: 0};
+
+var objects = [];
+var object = {
+    x: 0, y: 0,
+    size: 40,
+    fillStyle: "rgb(200,0,0)"
+};
+
+
 io.sockets.on('connection', function (client) {
+    objects.push(object);
     coords.x = 0;
     coords.y = 0;
     var speed = 3;
 
     setInterval(function () {
-        if (coords.x < coordsTo.x) {
-            coords.x += speed;
+        if (object.x < coordsTo.x) {
+            object.x += speed;
         }
 
-        if (coords.x > coordsTo.x) {
-            coords.x -= speed;
+        if (object.x > coordsTo.x) {
+            object.x -= speed;
         }
 
-        if (coords.y < coordsTo.y) {
-            coords.y += speed;
+        if (object.y < coordsTo.y) {
+            object.y += speed;
         }
 
-        if (coords.y > coordsTo.y) {
-            coords.y -= speed;
+        if (object.y > coordsTo.y) {
+            object.y -= speed;
         }
 
-        client.volatile.emit('render', coords);
+        client.volatile.emit('render', object);
     }, 60);
 
     client.on('move', function (data) {
