@@ -76,6 +76,7 @@ Z.object = {
             y: object.y,
             size: object.size,
             ctx: ctx,
+            fillStyle: object.fillStyle,
 
             draw: function () {
                 this.ctx.fillStyle = this.fillStyle;

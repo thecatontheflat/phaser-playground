@@ -72,12 +72,22 @@ var objects = [];
 var counter = 0;
 var spawnObject = function () {
     counter++;
+
+    var generateRandomColor = function () {
+        var color = [];
+        color.push(Math.round(Math.random() * 255));
+        color.push(Math.round(Math.random() * 255));
+        color.push(Math.round(Math.random() * 255));
+
+        return "rgb(" + color.join(',') + ")";
+    };
+
     return {
         id: counter,
         x: 0, y: 0,
         toX: 0, toY: 0,
         size: 40,
-        fillStyle: "rgb(200,0,0)"
+        fillStyle: generateRandomColor()
     };
 };
 
