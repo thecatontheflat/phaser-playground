@@ -1,34 +1,9 @@
 var Game = require('../models/game');
+var ObjectFactory = require('../models/object-factory');
 
 module.exports = function (io) {
-    var counter = 0;
-    var spawnObject = function () {
-        counter++;
-
-        var generateRandomColor = function () {
-            var color = [];
-            color.push(Math.round(Math.random() * 255));
-            color.push(Math.round(Math.random() * 255));
-            color.push(Math.round(Math.random() * 255));
-
-            return "rgb(" + color.join(',') + ")";
-        };
-
-        var getRandomInRange = function getRandomArbitrary (min, max) {
-            return Math.random() * (max - min) + min;
-        };
-
-        return {
-            id: counter,
-            x: 0, y: 0,
-            toX: 0, toY: 0,
-            size: getRandomInRange(20, 40),
-            fillStyle: generateRandomColor()
-        };
-    };
-
     io.sockets.on('connection', function (client) {
-        var object = spawnObject();
+        var object = ObjectFactory.create();
         client['object_id'] = object.id;
         Game.objects[object.id] = object;
 
