@@ -2,6 +2,7 @@ module.exports = function (io) {
     var Game = {
         speed: 3,
         objects: [],
+        updateRequired: false,
 
         attachObject: function (object) {
             this.objects[object.id] = object;
@@ -15,9 +16,8 @@ module.exports = function (io) {
             object.toY = to.y;
         },
 
-        serverLoop: function () {
-            var updateRequired = false;
-            Game.objects.forEach(function (object) {
+        getRecalculatePositionCallback: function() {
+            return function (object) {
                 if (object.getCenterCoords().x < object.toX) {
                     object.x += Game.speed;
                 }
@@ -34,10 +34,15 @@ module.exports = function (io) {
                     object.y -= Game.speed;
                 }
 
-                updateRequired = true;
-            });
+                Game.updateRequired = true;
+            };
+        },
 
-            if (updateRequired) {
+        serverLoop: function () {
+            Game.updateRequired = false;
+            Game.objects.forEach(Game.getRecalculatePositionCallback());
+
+            if (Game.updateRequired) {
                 io.emit('render', Game.objects);
             }
         },

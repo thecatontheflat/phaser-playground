@@ -10,6 +10,22 @@ var GameObjectPrototype = {
             x: this.x + this.size / 2,
             y: this.y + this.size / 2
         };
+    },
+
+    getLeftX: function () {
+        return this.x;
+    },
+
+    getRightX: function () {
+        return this.x + this.size;
+    },
+
+    getTopY: function () {
+        return this.y;
+    },
+
+    getBottomY: function () {
+        return this.y + this.size;
     }
 };
 
