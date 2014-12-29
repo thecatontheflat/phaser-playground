@@ -3,11 +3,13 @@ var Z = Z || {};
 Z.game = {
     objects: [],
     field: {},
+    canvas: undefined,
 
     initField: function () {
         this.field.ctx = document.getElementById('canvas').getContext('2d');
         this.field.width = 500;
         this.field.height = 500;
+        this.canvas = document.getElementById('canvas');
     },
 
     clearCanvas: function () {
@@ -23,28 +25,26 @@ Z.game = {
         }
     },
 
+    getMousePosition: function (canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    },
+
     init: function () {
         var self = this;
         this.initField();
+        this.render();
+        var socket = io.connect();
 
-        var getMousePosition = function (canvas, evt) {
-            var rect = canvas.getBoundingClientRect();
-            return {
-                x: evt.clientX - rect.left,
-                y: evt.clientY - rect.top
-            };
-        };
-
-        var canvas = document.getElementById('canvas');
-        canvas.addEventListener('mousedown', function (event) {
-            var coords = getMousePosition(canvas, event);
+        this.canvas.addEventListener('mousedown', function (event) {
+            var coords = self.getMousePosition(self.canvas, event);
 
             socket.emit('move', coords);
         }, false);
 
-        this.render();
-
-        var socket = io.connect();
         socket.on('render', function (objects) {
             self.objects = [];
             for (var i = 0; i < objects.length; i++) {
