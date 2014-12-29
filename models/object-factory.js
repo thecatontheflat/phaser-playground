@@ -1,7 +1,15 @@
+var GameObjectPrototype = {
+    id: undefined,
+    x: 0, y: 0,
+    toX: 1, toY: 1,
+    size: undefined,
+    fillStyle: undefined
+};
+
 module.exports = {
     counter: 0,
 
-    generateRandomColor: function () {
+    generateRandomFillStyle: function () {
         var color = [];
         color.push(Math.round(Math.random() * 255));
         color.push(Math.round(Math.random() * 255));
@@ -17,12 +25,11 @@ module.exports = {
     create: function () {
         this.counter++;
 
-        return {
-            id: this.counter,
-            x: 0, y: 0,
-            toX: 0, toY: 0,
-            size: this.getRandomNumberInRange(20, 40),
-            fillStyle: this.generateRandomColor()
-        };
+        var object = Object.create(GameObjectPrototype);
+        object.id = this.counter;
+        object.size = this.getRandomNumberInRange(20, 40);
+        object.fillStyle = this.generateRandomFillStyle();
+
+        return object;
     }
 };
