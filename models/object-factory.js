@@ -4,7 +4,7 @@ var GameObjectPrototype = {
     boundingBox: 10,
     field: {
         height: 500,
-        widgth: 500
+        width: 500
     },
 
     id: undefined,
@@ -36,11 +36,11 @@ var GameObjectPrototype = {
     },
 
     toUp: function () {
-        return this.getCenterCoords().y < this.toY;
+        return this.getCenterCoords().y > this.toY;
     },
 
     toDown: function () {
-        return this.getCenterCoords().y > this.toY;
+        return this.getCenterCoords().y < this.toY;
     },
 
     toLeft: function () {
@@ -56,31 +56,31 @@ var GameObjectPrototype = {
     },
 
     canDown: function () {
-        return this.getBottomY() + this.boundingBox > this.field.height;
-    },
-
-    canRight: function () {
-        return this.getRightX() + this.boundingBox > this.field.widgth;
+        return this.getBottomY() + this.boundingBox < this.field.height;
     },
 
     canLeft: function () {
         return this.getLeftX() - this.boundingBox > 0;
     },
 
+    canRight: function () {
+        return this.getRightX() + this.boundingBox < this.field.width;
+    },
+
     move: function () {
-        if (this.toRight()) {
+        if (this.toRight() && this.canRight()) {
             this.x += this.speed;
         }
 
-        if (this.toLeft()) {
+        if (this.toLeft() && this.canLeft()) {
             this.x -= this.speed;
         }
 
-        if (this.toUp()) {
+        if (this.toDown() && this.canDown()) {
             this.y += this.speed;
         }
 
-        if (this.toDown()) {
+        if (this.toUp() && this.canUp()) {
             this.y -= this.speed;
         }
     }
