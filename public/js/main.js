@@ -61,8 +61,14 @@ Z.game = {
         //window.setInterval(this.loopCallback(), 1);
 
         var socket = io.connect();
-        socket.on('render', function (data) {
-            self.objects[0] = Z.object.create(self.field.ctx, data);
+        socket.on('render', function (objects) {
+            self.objects = [];
+            for (var i = 0; i < objects.length; i++) {
+                var object = objects[i];
+                if (null != object) {
+                    self.objects.push(Z.object.create(self.field.ctx, object));
+                }
+            }
             self.loopCallback()();
         });
     }

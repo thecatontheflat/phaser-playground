@@ -68,46 +68,51 @@ var server = app.listen(3000, function () {
 var io = require('socket.io').listen(server);
 
 
-var coords = {x: 0, y: 0};
-var coordsTo = {x: 0, y: 0};
-
 var objects = [];
-var object = {
-    x: 0, y: 0,
-    size: 40,
-    fillStyle: "rgb(200,0,0)"
+var counter = 0;
+var spawnObject = function () {
+    counter++;
+    return {
+        id: counter,
+        x: 0, y: 0,
+        toX: 0, toY: 0,
+        size: 40,
+        fillStyle: "rgb(200,0,0)"
+    };
 };
 
 
 io.sockets.on('connection', function (client) {
-    objects.push(object);
-    coords.x = 0;
-    coords.y = 0;
+    var object = spawnObject();
+    client['object_id'] = object.id;
+    objects[object.id] = object;
     var speed = 3;
 
     setInterval(function () {
-        if (object.x < coordsTo.x) {
-            object.x += speed;
-        }
+        objects.forEach(function(object) {
+            if (object.x < object.toX) {
+                object.x += speed;
+            }
 
-        if (object.x > coordsTo.x) {
-            object.x -= speed;
-        }
+            if (object.x > object.toX) {
+                object.x -= speed;
+            }
 
-        if (object.y < coordsTo.y) {
-            object.y += speed;
-        }
+            if (object.y < object.toY) {
+                object.y += speed;
+            }
 
-        if (object.y > coordsTo.y) {
-            object.y -= speed;
-        }
+            if (object.y > object.toY) {
+                object.y -= speed;
+            }
+        });
 
-        client.volatile.emit('render', object);
+        client.volatile.emit('render', objects);
     }, 60);
 
     client.on('move', function (data) {
-        coordsTo.x = data.x;
-        coordsTo.y = data.y;
+        objects[client['object_id']].toX = data.x;
+        objects[client['object_id']].toY = data.y;
     });
 });
 
