@@ -81,15 +81,18 @@ var spawnObject = function () {
     };
 };
 
+var Game = {
+    objects: []
+};
 
 io.sockets.on('connection', function (client) {
     var object = spawnObject();
     client['object_id'] = object.id;
-    objects[object.id] = object;
+    Game.objects[object.id] = object;
     var speed = 3;
 
-    setInterval(function () {
-        objects.forEach(function(object) {
+    var serverLoop = function () {
+        Game.objects.forEach(function (object) {
             if (object.x < object.toX) {
                 object.x += speed;
             }
@@ -107,12 +110,25 @@ io.sockets.on('connection', function (client) {
             }
         });
 
-        client.volatile.emit('render', objects);
-    }, 60);
+        client.volatile.emit('render', Game.objects);
+    };
+
+    setInterval(serverLoop, 60);
 
     client.on('move', function (data) {
-        objects[client['object_id']].toX = data.x;
-        objects[client['object_id']].toY = data.y;
+        Game.objects[client['object_id']].toX = data.x;
+        Game.objects[client['object_id']].toY = data.y;
+    });
+
+    client.on('disconnect', function () {
+        var newObjects = [];
+        Game.objects.forEach(function (object) {
+            if (object.id != client['object_id']) {
+                newObjects[object.id] = object;
+            }
+        });
+
+        Game.objects = newObjects;
     });
 });
 

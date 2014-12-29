@@ -52,13 +52,7 @@ Z.game = {
             socket.emit('move', coords);
         }, false);
 
-        var player = Z.player.create(this.field);
-        player.init();
-
-        //this.objects.push(player);
         this.loopCallback()();
-
-        //window.setInterval(this.loopCallback(), 1);
 
         var socket = io.connect();
         socket.on('render', function (objects) {
@@ -69,6 +63,7 @@ Z.game = {
                     self.objects.push(Z.object.create(self.field.ctx, object));
                 }
             }
+
             self.loopCallback()();
         });
     }
