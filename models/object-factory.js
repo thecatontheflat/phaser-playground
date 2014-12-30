@@ -14,25 +14,25 @@ var GameObjectPrototype = {
 
     getCenterCoords: function () {
         return {
-            x: this.x + this.size / 2,
-            y: this.y + this.size / 2
+            x: Math.round(this.x + this.size / 2),
+            y: Math.round(this.y + this.size / 2)
         };
     },
 
     getLeftX: function () {
-        return this.x;
+        return Math.round(this.x - this.boundingBox);
     },
 
     getRightX: function () {
-        return this.x + this.size;
+        return Math.round(this.x + this.size + this.boundingBox);
     },
 
     getTopY: function () {
-        return this.y;
+        return Math.round(this.y - this.boundingBox);
     },
 
     getBottomY: function () {
-        return this.y + this.size;
+        return Math.round(this.y + this.size + this.boundingBox);
     },
 
     toUp: function () {
@@ -52,19 +52,19 @@ var GameObjectPrototype = {
     },
 
     canUp: function () {
-        return this.getTopY() - this.boundingBox > 0;
+        return this.getTopY() > 0;
     },
 
     canDown: function () {
-        return this.getBottomY() + this.boundingBox < this.field.height;
+        return this.getBottomY() < this.field.height;
     },
 
     canLeft: function () {
-        return this.getLeftX() - this.boundingBox > 0;
+        return this.getLeftX() > 0;
     },
 
     canRight: function () {
-        return this.getRightX() + this.boundingBox < this.field.width;
+        return this.getRightX() < this.field.width;
     },
 
     move: function () {
