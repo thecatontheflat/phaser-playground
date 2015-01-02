@@ -1,3 +1,5 @@
+var pvp = require('./pvp');
+
 module.exports = {
     objects: [],
 
@@ -11,6 +13,7 @@ module.exports = {
                 var distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance < currentObject.collisionRadius + object.collisionRadius) {
+                    pvp.fight(object, currentObject);
                     collides = true;
                 }
             }
