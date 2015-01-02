@@ -1,3 +1,9 @@
+body {
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+}
+
 #canvas {
     border: dotted 1px gray;
 }
