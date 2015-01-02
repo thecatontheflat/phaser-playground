@@ -5,10 +5,6 @@ var GameObjectPrototype = {
     x: 55, y: 55,
     toX: 55, toY: 55,
     boundingBox: 10,
-    field: {
-        height: 500,
-        width: 500
-    },
 
     id: undefined,
     size: undefined,

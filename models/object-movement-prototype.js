@@ -45,7 +45,7 @@ module.exports = {
     },
 
     canDown: function () {
-        return this.getBottomY() < this.field.height;
+        return this.getBottomY() < GameField.height;
     },
 
     canLeft: function () {
@@ -53,7 +53,7 @@ module.exports = {
     },
 
     canRight: function () {
-        return this.getRightX() < this.field.width;
+        return this.getRightX() < GameField.width;
     },
 
     move: function () {
