@@ -11,9 +11,12 @@ var GameObjectPrototype = {
 
     id: undefined,
     size: undefined,
-    collisionRadius: undefined,
     fillStyle: undefined,
     speed: undefined,
+
+    get collisionRadius () {
+        return Math.round(this.size / 2);
+    },
 
     getCenterCoords: function () {
         return {
@@ -70,6 +73,12 @@ var GameObjectPrototype = {
         return this.getRightX() < this.field.width;
     },
 
+    fight: function () {
+        if (this.size > 10) {
+            this.size--;
+        }
+    },
+
     move: function () {
         var newX, newY;
         var self = this;
@@ -115,7 +124,7 @@ module.exports = {
         return "rgb(" + color.join(',') + ")";
     },
 
-    getRandomNumberInRange: function getRandomArbitrary(min, max) {
+    getRandomNumberInRange: function getRandomArbitrary (min, max) {
         return Math.random() * (max - min) + min;
     },
 
@@ -124,8 +133,7 @@ module.exports = {
 
         var object = Object.create(GameObjectPrototype);
         object.id = this.counter;
-        object.size = this.getRandomNumberInRange(20, 40);
-        object.collisionRadius = object.size / 2;
+        object.size = this.getRandomNumberInRange(70, 80);
         object.speed = this.getRandomNumberInRange(3, 10);
         object.fillStyle = this.generateRandomFillStyle();
 
