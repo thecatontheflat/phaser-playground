@@ -1,3 +1,5 @@
+var GameField = require('./game-field');
+
 var GameObjectPrototype = {
     x: 55, y: 55,
     toX: 55, toY: 55,
@@ -9,6 +11,7 @@ var GameObjectPrototype = {
 
     id: undefined,
     size: undefined,
+    collisionRadius: undefined,
     fillStyle: undefined,
     speed: undefined,
 
@@ -68,20 +71,34 @@ var GameObjectPrototype = {
     },
 
     move: function () {
+        var newX, newY;
+        var self = this;
         if (this.toRight() && this.canRight()) {
-            this.x += this.speed;
+            newX = this.x + this.speed;
+            if (false === GameField.checkCollision(self, newX, this.y)) {
+                this.x = newX;
+            }
         }
 
         if (this.toLeft() && this.canLeft()) {
-            this.x -= this.speed;
+            newX = this.x - this.speed;
+            if (false === GameField.checkCollision(self, newX, this.y)) {
+                this.x = newX;
+            }
         }
 
         if (this.toDown() && this.canDown()) {
-            this.y += this.speed;
+            newY = this.y + this.speed;
+            if (false === GameField.checkCollision(self, this.x, newY)) {
+                this.y = newY;
+            }
         }
 
         if (this.toUp() && this.canUp()) {
-            this.y -= this.speed;
+            newY = this.y - this.speed;
+            if (false === GameField.checkCollision(self, this.x, newY)) {
+                this.y = newY;
+            }
         }
     }
 };
@@ -98,7 +115,7 @@ module.exports = {
         return "rgb(" + color.join(',') + ")";
     },
 
-    getRandomNumberInRange: function getRandomArbitrary (min, max) {
+    getRandomNumberInRange: function getRandomArbitrary(min, max) {
         return Math.random() * (max - min) + min;
     },
 
@@ -108,6 +125,7 @@ module.exports = {
         var object = Object.create(GameObjectPrototype);
         object.id = this.counter;
         object.size = this.getRandomNumberInRange(20, 40);
+        object.collisionRadius = object.size / 2;
         object.speed = this.getRandomNumberInRange(3, 10);
         object.fillStyle = this.generateRandomFillStyle();
 

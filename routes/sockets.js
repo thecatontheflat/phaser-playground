@@ -3,7 +3,7 @@ module.exports = function (io) {
     var ObjectFactory = require('../models/object-factory');
 
     io.sockets.on('connection', function (client) {
-        var object = ObjectFactory.spawn(client);
+        var object = ObjectFactory.spawn();
         Game.attachObject(object);
 
         client['object_id'] = object.id;
