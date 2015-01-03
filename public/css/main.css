@@ -2,8 +2,10 @@ body {
     overflow: hidden;
     text-align: center;
     width: 100%;
+    background-color: #ccc;
 }
 
 #canvas {
-    border: dotted 1px gray;
+    background-color: white;
+    border: 1px dashed gray;
 }
