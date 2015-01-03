@@ -2,8 +2,8 @@ var pvp = require('./pvp');
 
 module.exports = {
     objects: [],
-    height: 500,
-    width: 500,
+    width: 900,
+    height: 600,
 
     checkCollision: function (currentObject, currentObjectNewX, currentObjectNewY) {
         var collides = false;

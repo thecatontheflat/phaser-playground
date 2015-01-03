@@ -7,8 +7,8 @@ Z.game = {
 
     initField: function () {
         this.field.ctx = document.getElementById('canvas').getContext('2d');
-        this.field.width = 500;
-        this.field.height = 500;
+        this.field.width = 900;
+        this.field.height = 600;
         this.canvas = document.getElementById('canvas');
     },
 
@@ -71,6 +71,11 @@ Z.object = {
             draw: function () {
                 this.ctx.fillStyle = this.fillStyle;
                 this.ctx.fillRect(this.x, this.y, this.size, this.size);
+                //this.ctx.beginPath();
+                //this.ctx.fillStyle = this.fillStyle;
+                //this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, true);
+                //this.ctx.closePath();
+                //this.ctx.fill();
             }
         };
     }

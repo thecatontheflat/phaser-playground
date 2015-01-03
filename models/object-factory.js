@@ -21,8 +21,8 @@ module.exports = {
 
         var object = Object.create(GameObjectPrototype);
         object.id = this.counter;
-        object.size = this.getRandomNumberInRange(70, 80);
-        object.speed = this.getRandomNumberInRange(3, 10);
+        object.size = 40;
+        object.speed = 10;
         object.fillStyle = this.generateRandomFillStyle();
 
         return object;

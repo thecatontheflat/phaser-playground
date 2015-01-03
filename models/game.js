@@ -14,13 +14,28 @@ module.exports = function (io) {
             var id = client['object_id'];
             var object = GameField.objects[id];
 
-            object.toX = to.x;
-            object.toY = to.y;
+            // Checking if object was not killed
+            if (undefined !== object) {
+                object.toX = to.x;
+                object.toY = to.y;
+            }
         },
 
-        getRecalculatePositionCallback: function() {
+        getRecalculatePositionCallback: function () {
             return function (object) {
                 object.move();
+                Game.updateRequired = true;
+            };
+        },
+
+        getCheckHealthCallback: function () {
+            return function (object) {
+                if (object.killed) {
+                    Game.removeObject(object);
+                }
+
+                object.heal();
+
                 Game.updateRequired = true;
             };
         },
@@ -28,6 +43,7 @@ module.exports = function (io) {
         serverLoop: function () {
             Game.updateRequired = false;
             GameField.objects.forEach(Game.getRecalculatePositionCallback());
+            GameField.objects.forEach(Game.getCheckHealthCallback());
 
             if (Game.updateRequired) {
                 io.emit('render', GameField.objects);
@@ -38,6 +54,17 @@ module.exports = function (io) {
             var newObjects = [];
             GameField.objects.forEach(function (object) {
                 if (object.id != client['object_id']) {
+                    newObjects[object.id] = object;
+                }
+            });
+
+            GameField.objects = newObjects;
+        },
+
+        removeObject: function (objectToRemove) {
+            var newObjects = [];
+            GameField.objects.forEach(function (object) {
+                if (object.id != objectToRemove.id) {
                     newObjects[object.id] = object;
                 }
             });
