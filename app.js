@@ -52,10 +52,10 @@ var io = require('socket.io').listen(server);
 //sockets(io);
 
 io.sockets.on('connection', function (client) {
-    io.emit('new-player');
+    io.emit('new-player', {id: client.id});
 
     client.on('phaser-loaded', function () {
-        io.emit('start');
+        client.emit('start', {id: client.id});
     });
 
 });

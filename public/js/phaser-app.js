@@ -1,6 +1,7 @@
 (function () {
     var socket = io.connect();
     var game;
+    var myId;
 
     socket.on('connect', function () {
         game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-app', {
@@ -14,17 +15,21 @@
     function Skeleton (id, game) {
         this.toX = null;
         this.toY = null;
+        this.id = id;
         this.game = game;
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         this.skeleton = game.add.sprite(0, 0, 'skeleton');
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.physics.enable(this.skeleton, Phaser.Physics.ARCADE);
+
         this.skeleton.anchor.setTo(0.5, 0.5);
         this.skeleton.animations.add('walk', [0, 1, 2]);
         this.skeleton.body.collideWorldBounds = true;
     }
 
     Skeleton.prototype.update = function () {
+        if (this.id !== myId) return;
+
         if (this.game.input.mousePointer.isDown) {
             this.toX = this.game.input.x;
             this.toY = this.game.input.y;
@@ -57,12 +62,13 @@
     function create () {
         socket.emit('phaser-loaded');
 
-        socket.on('start', function () {
-            players.push(new Skeleton(1, game));
+        socket.on('start', function (data) {
+            myId = data.id;
+            players.push(new Skeleton(myId, game));
         });
 
-        socket.on('new-player', function () {
-            players.push(new Skeleton(1, game));
+        socket.on('new-player', function (data) {
+            players.push(new Skeleton(data.id, game));
         });
     }
 
