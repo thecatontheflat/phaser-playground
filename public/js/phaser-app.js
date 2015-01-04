@@ -70,6 +70,12 @@
         socket.on('new-player', function (data) {
             players[data.id] = new Skeleton(data.id, game);
         });
+
+        socket.on('remove', function (data) {
+            if (players[data.id]) {
+                players[data.id].skeleton.kill();
+            }
+        });
     }
 
     function update () {

@@ -63,6 +63,10 @@ io.sockets.on('connection', function (client) {
         io.emit('move', data);
     });
 
+    client.on('disconnect', function () {
+        io.emit('remove', {id: client.id});
+    });
+
 });
 
 
