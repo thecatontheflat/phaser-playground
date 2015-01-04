@@ -6,68 +6,60 @@
         render: render
     });
 
+    function Skeleton (id, game) {
+        this.toX = null;
+        this.toY = null;
+        this.game = game;
+        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        this.skeleton = game.add.sprite(0, 0, 'skeleton');
+        this.game.physics.enable(this.skeleton, Phaser.Physics.ARCADE);
+        this.skeleton.anchor.setTo(0.5, 0.5);
+        this.skeleton.animations.add('walk', [0, 1, 2]);
+        this.skeleton.body.collideWorldBounds = true;
+    }
+
+    Skeleton.prototype.update = function () {
+        if (this.game.input.mousePointer.isDown) {
+            this.toX = this.game.input.x;
+            this.toY = this.game.input.y;
+            var radians = this.game.physics.arcade.moveToXY(this.skeleton, this.toX, this.toY, 400);
+
+            if (-1.5 < radians && radians < 1.5) {
+                this.skeleton.scale.setTo(-1, 1);
+            } else {
+                this.skeleton.scale.setTo(1, 1);
+            }
+
+            this.skeleton.animations.play('walk', 10, true);
+        } else {
+            if (Phaser.Rectangle.contains(this.skeleton.body, this.toX, this.toY)) {
+                this.skeleton.body.velocity.setTo(0, 0);
+                this.skeleton.animations.stop('walk', true);
+            }
+        }
+    };
+
+
+    var socket = io.connect();
+    var players = [];
+
     function preload () {
         game.load.image('earth', '/assets/scorched_earth.png');
         game.load.spritesheet('skeleton', '/images/skeleton_sprite.png', 64, 87);
     }
 
-    var cursors;
     var skeleton;
 
     function create () {
-        game.physics.startSystem(Phaser.Physics.ARCADE);
-
-        skeleton = game.add.sprite(0, 0, 'skeleton');
-        game.physics.enable(skeleton, Phaser.Physics.ARCADE);
-
-        skeleton.anchor.setTo(0.5, 0.5);
-        skeleton.animations.add('walk', [0, 1, 2]);
-        skeleton.body.collideWorldBounds = true;
-
-        cursors = game.input.keyboard.createCursorKeys();
+        players.push(new Skeleton(1, game));
     }
 
-    var toX, toY;
-
     function update () {
-        if (game.input.mousePointer.isDown) {
-            toX = game.input.x;
-            toY = game.input.y;
-            var radians = game.physics.arcade.moveToXY(skeleton, toX, toY, 400);
-
-            if (-1.5 < radians && radians < 1.5) {
-                skeleton.scale.setTo(-1, 1);
-            } else {
-                skeleton.scale.setTo(1, 1);
-            }
-
-            skeleton.animations.play('walk', 10, true);
-        } else {
-            if (Phaser.Rectangle.contains(skeleton.body, toX, toY)) {
-                skeleton.body.velocity.setTo(0, 0);
-                skeleton.animations.stop('walk', true);
-            }
+        for (var i = 0; i < players.length; i++) {
+            var skeleton = players[i];
+            skeleton.update();
         }
-
-        //if (cursors.left.isDown) {
-        //    skeleton.body.velocity.x = -300;
-        //    skeleton.animations.play('walk', 10, true);
-        //    skeleton.scale.setTo(1, 1);
-        //} else if (cursors.right.isDown) {
-        //    skeleton.body.velocity.x = 300;
-        //    skeleton.animations.play('walk', 10, true);
-        //    skeleton.scale.setTo(-1, 1);
-        //} else if (cursors.up.isDown) {
-        //    skeleton.body.velocity.y = -300;
-        //    skeleton.animations.play('walk', 10, true);
-        //} else if (cursors.down.isDown) {
-        //    skeleton.body.velocity.y = 300;
-        //    skeleton.animations.play('walk', 10, true);
-        //} else {
-        //    skeleton.body.velocity.y = 0;
-        //    skeleton.body.velocity.x = 0;
-        //    skeleton.animations.stop('walk', true);
-        //}
     }
 
     function render () {
