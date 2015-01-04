@@ -27,26 +27,47 @@
         cursors = game.input.keyboard.createCursorKeys();
     }
 
+    var toX, toY;
+
     function update () {
-        if (cursors.left.isDown) {
-            skeleton.body.velocity.x = -300;
-            skeleton.animations.play('walk', 10, true);
-            skeleton.scale.setTo(1, 1);
-        } else if (cursors.right.isDown) {
-            skeleton.body.velocity.x = 300;
-            skeleton.animations.play('walk', 10, true);
-            skeleton.scale.setTo(-1, 1);
-        } else if (cursors.up.isDown) {
-            skeleton.body.velocity.y = -300;
-            skeleton.animations.play('walk', 10, true);
-        } else if (cursors.down.isDown) {
-            skeleton.body.velocity.y = 300;
+        if (game.input.mousePointer.isDown) {
+            toX = game.input.x;
+            toY = game.input.y;
+            var radians = game.physics.arcade.moveToXY(skeleton, toX, toY, 400);
+
+            if (-1.5 < radians && radians < 1.5) {
+                skeleton.scale.setTo(-1, 1);
+            } else {
+                skeleton.scale.setTo(1, 1);
+            }
+
             skeleton.animations.play('walk', 10, true);
         } else {
-            skeleton.body.velocity.y = 0;
-            skeleton.body.velocity.x = 0;
-            skeleton.animations.stop('walk', true);
+            if (Phaser.Rectangle.contains(skeleton.body, toX, toY)) {
+                skeleton.body.velocity.setTo(0, 0);
+                skeleton.animations.stop('walk', true);
+            }
         }
+
+        //if (cursors.left.isDown) {
+        //    skeleton.body.velocity.x = -300;
+        //    skeleton.animations.play('walk', 10, true);
+        //    skeleton.scale.setTo(1, 1);
+        //} else if (cursors.right.isDown) {
+        //    skeleton.body.velocity.x = 300;
+        //    skeleton.animations.play('walk', 10, true);
+        //    skeleton.scale.setTo(-1, 1);
+        //} else if (cursors.up.isDown) {
+        //    skeleton.body.velocity.y = -300;
+        //    skeleton.animations.play('walk', 10, true);
+        //} else if (cursors.down.isDown) {
+        //    skeleton.body.velocity.y = 300;
+        //    skeleton.animations.play('walk', 10, true);
+        //} else {
+        //    skeleton.body.velocity.y = 0;
+        //    skeleton.body.velocity.x = 0;
+        //    skeleton.animations.stop('walk', true);
+        //}
     }
 
     function render () {
