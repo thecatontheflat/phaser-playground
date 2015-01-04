@@ -49,6 +49,16 @@ var server = app.listen(process.env.PORT || 3000, function () {
 });
 
 var io = require('socket.io').listen(server);
-sockets(io);
+//sockets(io);
+
+io.sockets.on('connection', function (client) {
+    io.emit('new-player');
+
+    client.on('phaser-loaded', function () {
+        io.emit('start');
+    });
+
+});
+
 
 module.exports = app;

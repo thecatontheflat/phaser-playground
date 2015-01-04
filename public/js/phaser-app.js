@@ -1,9 +1,14 @@
 (function () {
-    var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-app', {
-        preload: preload,
-        create: create,
-        update: update,
-        render: render
+    var socket = io.connect();
+    var game;
+
+    socket.on('connect', function () {
+        game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-app', {
+            preload: preload,
+            create: create,
+            update: update,
+            render: render
+        });
     });
 
     function Skeleton (id, game) {
@@ -40,8 +45,6 @@
         }
     };
 
-
-    var socket = io.connect();
     var players = [];
 
     function preload () {
@@ -52,7 +55,15 @@
     var skeleton;
 
     function create () {
-        players.push(new Skeleton(1, game));
+        socket.emit('phaser-loaded');
+
+        socket.on('start', function () {
+            players.push(new Skeleton(1, game));
+        });
+
+        socket.on('new-player', function () {
+            players.push(new Skeleton(1, game));
+        });
     }
 
     function update () {
