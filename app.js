@@ -58,6 +58,11 @@ io.sockets.on('connection', function (client) {
         client.emit('start', {id: client.id});
     });
 
+    client.on('move', function (data) {
+        data.id = client.id;
+        io.emit('move', data);
+    });
+
 });
 
 

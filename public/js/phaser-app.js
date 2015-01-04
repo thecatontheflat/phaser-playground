@@ -2,6 +2,15 @@
     var socket = io.connect();
     var game;
     var myId;
+    var players = [];
+
+    socket.on('move', function (data) {
+        if (players[data.id] && data.id !== myId) {
+            var skeleton = players[data.id];
+            skeleton.toX = data.toX;
+            skeleton.toY = data.toY;
+        }
+    });
 
     socket.on('connect', function () {
         game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-app', {
@@ -28,29 +37,20 @@
     }
 
     Skeleton.prototype.update = function () {
-        if (this.id !== myId) return;
-
-        if (this.game.input.mousePointer.isDown) {
-            this.toX = this.game.input.x;
-            this.toY = this.game.input.y;
-            var radians = this.game.physics.arcade.moveToXY(this.skeleton, this.toX, this.toY, 400);
-
-            if (-1.5 < radians && radians < 1.5) {
-                this.skeleton.scale.setTo(-1, 1);
-            } else {
-                this.skeleton.scale.setTo(1, 1);
-            }
-
-            this.skeleton.animations.play('walk', 10, true);
+        var radians = this.game.physics.arcade.moveToXY(this.skeleton, this.toX, this.toY, 400);
+        if (-1.5 < radians && radians < 1.5) {
+            this.skeleton.scale.setTo(-1, 1);
         } else {
-            if (Phaser.Rectangle.contains(this.skeleton.body, this.toX, this.toY)) {
-                this.skeleton.body.velocity.setTo(0, 0);
-                this.skeleton.animations.stop('walk', true);
-            }
+            this.skeleton.scale.setTo(1, 1);
+        }
+
+        this.skeleton.animations.play('walk', 10, true);
+
+        if (Phaser.Rectangle.contains(this.skeleton.body, this.toX, this.toY)) {
+            this.skeleton.body.velocity.setTo(0, 0);
+            this.skeleton.animations.stop('walk', true);
         }
     };
-
-    var players = [];
 
     function preload () {
         game.load.image('earth', '/assets/scorched_earth.png');
@@ -64,17 +64,27 @@
 
         socket.on('start', function (data) {
             myId = data.id;
-            players.push(new Skeleton(myId, game));
+            players[myId] = new Skeleton(myId, game);
         });
 
         socket.on('new-player', function (data) {
-            players.push(new Skeleton(data.id, game));
+            players[data.id] = new Skeleton(data.id, game);
         });
     }
 
     function update () {
-        for (var i = 0; i < players.length; i++) {
-            var skeleton = players[i];
+        var mySkeleton = players[myId];
+        if (game.input.mousePointer.isDown) {
+            mySkeleton.toX = this.game.input.x;
+            mySkeleton.toY = this.game.input.y;
+
+            socket.emit('move', {toX: mySkeleton.toX, toY: mySkeleton.toY});
+        }
+
+        for (var id in players) {
+            var skeleton = players[id];
+            if (!skeleton) continue;
+
             skeleton.update();
         }
     }
