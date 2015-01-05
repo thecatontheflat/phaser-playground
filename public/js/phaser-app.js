@@ -46,6 +46,13 @@
     };
 
     Skeleton.prototype.update = function () {
+        for (var id in players) {
+            var skeleton = players[id];
+            if (!skeleton || id == myId) continue;
+            this.game.physics.arcade.collide(this.sprite, skeleton.sprite);
+        }
+
+
         var radians = this.game.physics.arcade.moveToXY(this.sprite, this.toX, this.toY, 400);
         if (-1.5 < radians && radians < 1.5) {
             this.sprite.scale.setTo(-1, 1);

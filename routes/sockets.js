@@ -8,11 +8,10 @@ module.exports = function (io) {
     }
 
     io.sockets.on('connection', function (client) {
-        players.push(new Player(client.id, 0, 0));
-
         io.emit('new-player', {id: client.id});
 
         client.on('phaser-loaded', function () {
+            players.push(new Player(client.id, 0, 0));
             client.emit('start', {id: client.id, players: players});
         });
 
