@@ -51,11 +51,21 @@ var server = app.listen(process.env.PORT || 3000, function () {
 var io = require('socket.io').listen(server);
 //sockets(io);
 
+var players = [];
+
+function Player (id, x, y) {
+    this.id = id;
+    this.x = x;
+    this.y = y;
+}
+
 io.sockets.on('connection', function (client) {
+    players.push(new Player(client.id, 0, 0));
+
     io.emit('new-player', {id: client.id});
 
     client.on('phaser-loaded', function () {
-        client.emit('start', {id: client.id});
+        client.emit('start', {id: client.id, players: players});
     });
 
     client.on('move', function (data) {
@@ -64,6 +74,15 @@ io.sockets.on('connection', function (client) {
     });
 
     client.on('disconnect', function () {
+        var newPlayers = [];
+        players.forEach(function (players) {
+            if (players.id != client.id) {
+                newPlayers.push(player);
+            }
+        });
+
+        players = newPlayers;
+
         io.emit('remove', {id: client.id});
     });
 

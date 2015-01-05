@@ -21,13 +21,13 @@
         });
     });
 
-    function Skeleton (id, game) {
+    function Skeleton (id, game, startX, startY) {
         this.toX = null;
         this.toY = null;
         this.id = id;
         this.game = game;
 
-        this.skeleton = game.add.sprite(0, 0, 'skeleton');
+        this.skeleton = game.add.sprite(startX, startY, 'skeleton');
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.game.physics.enable(this.skeleton, Phaser.Physics.ARCADE);
 
@@ -53,6 +53,7 @@
     };
 
     function preload () {
+        game.stage.disableVisibilityChange = true;
         game.load.image('earth', '/assets/scorched_earth.png');
         game.load.spritesheet('skeleton', '/images/skeleton_sprite.png', 64, 87);
     }
@@ -64,7 +65,12 @@
 
         socket.on('start', function (data) {
             myId = data.id;
-            players[myId] = new Skeleton(myId, game);
+            //players[myId] = new Skeleton(myId, game);
+            for (var i = 0; i < data.players.length; i++) {
+                var player = data.players[i];
+                console.log(player);
+                players[player.id] = new Skeleton(player.id, game, player.x, player.y);
+            }
         });
 
         socket.on('new-player', function (data) {
@@ -79,6 +85,8 @@
     }
 
     function update () {
+        if (!players[myId]) return;
+
         var mySkeleton = players[myId];
         if (game.input.mousePointer.isDown) {
             mySkeleton.toX = this.game.input.x;
