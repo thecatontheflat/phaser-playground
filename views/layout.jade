@@ -2,13 +2,8 @@ doctype html
 html
     head(lang='en')
         meta(charset='UTF-8')
-        title Squares Game
-        link(rel='stylesheet', href='/css/main.css')
-        script(src='/js/main.js')
+        title Phaser Game
         script(src='/socket.io/socket.io.js')
+        script(src='/bower_components/phaser/build/phaser.min.js')
+        script(src='/js/phaser-app.js')
     body
-        canvas#canvas(width='900', height='600')
-        script.
-            (function () {
-                Z.game.init();
-            })();

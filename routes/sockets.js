@@ -1,21 +1,48 @@
 module.exports = function (io) {
-    var Game = require('../models/game')(io);
-    var ObjectFactory = require('../models/object-factory');
+    var players = [];
+
+    function Player (id, x, y) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+    }
 
     io.sockets.on('connection', function (client) {
-        var object = ObjectFactory.spawn();
-        Game.attachObject(object);
+        players.push(new Player(client.id, 0, 0));
 
-        client['object_id'] = object.id;
+        io.emit('new-player', {id: client.id});
 
-        client.on('move', function (to) {
-            Game.moveObject(client, to);
+        client.on('phaser-loaded', function () {
+            client.emit('start', {id: client.id, players: players});
+        });
+
+        client.on('move', function (data) {
+            data.id = client.id;
+            io.emit('move', data);
+        });
+
+        client.on('sync', function (data) {
+            players.forEach(function (player) {
+                data.forEach(function (clientPlayer) {
+                    if (player.id == clientPlayer.id) {
+                        player.x = clientPlayer.x;
+                        player.y = clientPlayer.y;
+                    }
+                });
+            });
         });
 
         client.on('disconnect', function () {
-            Game.disconnect(client);
+            var newPlayers = [];
+            players.forEach(function (player) {
+                if (player.id != client.id) {
+                    newPlayers.push(player);
+                }
+            });
+
+            players = newPlayers;
+
+            io.emit('remove', {id: client.id});
         });
     });
-
-    setInterval(Game.serverLoop, 60);
 };
