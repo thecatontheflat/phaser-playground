@@ -73,10 +73,21 @@ io.sockets.on('connection', function (client) {
         io.emit('move', data);
     });
 
+    client.on('sync', function (data) {
+        players.forEach(function (player) {
+            data.forEach(function (clientPlayer) {
+                if (player.id == clientPlayer.id) {
+                    player.x = clientPlayer.x;
+                    player.y = clientPlayer.y;
+                }
+            });
+        });
+    });
+
     client.on('disconnect', function () {
         var newPlayers = [];
-        players.forEach(function (players) {
-            if (players.id != client.id) {
+        players.forEach(function (player) {
+            if (player.id != client.id) {
                 newPlayers.push(player);
             }
         });

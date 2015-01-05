@@ -13,7 +13,7 @@
     });
 
     socket.on('connect', function () {
-        game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-app', {
+        game = new Phaser.Game(400, 400, Phaser.AUTO, 'phaser-app', {
             preload: preload,
             create: create,
             update: update,
@@ -22,33 +22,42 @@
     });
 
     function Skeleton (id, game, startX, startY) {
-        this.toX = null;
-        this.toY = null;
+        this.toX = startX;
+        this.toY = startY;
+
         this.id = id;
         this.game = game;
 
-        this.skeleton = game.add.sprite(startX, startY, 'skeleton');
+        this.sprite = game.add.sprite(startX, startY, 'skeleton');
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
-        this.game.physics.enable(this.skeleton, Phaser.Physics.ARCADE);
+        this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 
-        this.skeleton.anchor.setTo(0.5, 0.5);
-        this.skeleton.animations.add('walk', [0, 1, 2]);
-        this.skeleton.body.collideWorldBounds = true;
+        this.sprite.anchor.setTo(0.5, 0.5);
+        this.sprite.animations.add('walk', [0, 1, 2]);
+        this.sprite.body.collideWorldBounds = true;
     }
 
+    Skeleton.prototype.toServer = function () {
+        return {
+            id: this.id,
+            x: this.sprite.body.x,
+            y: this.sprite.body.y
+        };
+    };
+
     Skeleton.prototype.update = function () {
-        var radians = this.game.physics.arcade.moveToXY(this.skeleton, this.toX, this.toY, 400);
+        var radians = this.game.physics.arcade.moveToXY(this.sprite, this.toX, this.toY, 400);
         if (-1.5 < radians && radians < 1.5) {
-            this.skeleton.scale.setTo(-1, 1);
+            this.sprite.scale.setTo(-1, 1);
         } else {
-            this.skeleton.scale.setTo(1, 1);
+            this.sprite.scale.setTo(1, 1);
         }
 
-        this.skeleton.animations.play('walk', 10, true);
+        this.sprite.animations.play('walk', 10, true);
 
-        if (Phaser.Rectangle.contains(this.skeleton.body, this.toX, this.toY)) {
-            this.skeleton.body.velocity.setTo(0, 0);
-            this.skeleton.animations.stop('walk', true);
+        if (Phaser.Rectangle.contains(this.sprite.body, this.toX, this.toY)) {
+            this.sprite.body.velocity.setTo(0, 0);
+            this.sprite.animations.stop('walk', true);
         }
     };
 
@@ -58,8 +67,6 @@
         game.load.spritesheet('skeleton', '/images/skeleton_sprite.png', 64, 87);
     }
 
-    var skeleton;
-
     function create () {
         socket.emit('phaser-loaded');
 
@@ -68,23 +75,28 @@
             //players[myId] = new Skeleton(myId, game);
             for (var i = 0; i < data.players.length; i++) {
                 var player = data.players[i];
-                console.log(player);
+                //console.log(player);
                 players[player.id] = new Skeleton(player.id, game, player.x, player.y);
+                //game.physics.arcade.enable(players[player.id].sprite);
             }
         });
 
         socket.on('new-player', function (data) {
-            players[data.id] = new Skeleton(data.id, game);
+            players[data.id] = new Skeleton(data.id, game, data.x, data.y);
+            //game.physics.arcade.enable(players[data.id].sprite);
         });
 
         socket.on('remove', function (data) {
             if (players[data.id]) {
-                players[data.id].skeleton.kill();
+                players[data.id].sprite.kill();
             }
         });
     }
 
+    var counter = 0;
+
     function update () {
+        var toServer = [];
         if (!players[myId]) return;
 
         var mySkeleton = players[myId];
@@ -100,6 +112,14 @@
             if (!skeleton) continue;
 
             skeleton.update();
+            toServer.push(skeleton.toServer());
+        }
+
+        counter++;
+        if (counter > 100) {
+            socket.emit('sync', toServer);
+
+            counter = 0;
         }
     }
 
