@@ -22,8 +22,22 @@
     });
 
     function Skeleton (id, game, startX, startY) {
+        this.rgbToHex = function (r, g, b) {
+            return "0x" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        };
+
         this.toX = startX;
         this.toY = startY;
+        this.health = 100;
+
+        var colour = this.rgbToHex(0, 255, 0);
+        this.healthbar = game.add.graphics(1, -50);
+        this.healthbar.beginFill(colour);
+        this.healthbar.lineStyle(5, colour, 1);
+        this.healthbar.moveTo(0, -5);
+        this.healthbar.lineTo(100, -5);
+        this.healthbar.endFill();
+        this.healthbar.width = this.health;
 
         this.id = id;
         this.game = game;
@@ -52,8 +66,17 @@
             this.game.physics.arcade.collide(this.sprite, skeleton.sprite);
         }
 
+        var radians = this.game.physics.arcade.moveToXY(this.sprite, this.toX, this.toY, 200);
+        this.healthbar.x = this.sprite.x - 45;
+        this.healthbar.y = this.sprite.y - 45;
+        this.healthbar.width = this.health;
 
-        var radians = this.game.physics.arcade.moveToXY(this.sprite, this.toX, this.toY, 400);
+        if (this.health > 0) {
+            this.health--;
+        } else {
+            this.health = 100;
+        }
+
         if (-1.5 < radians && radians < 1.5) {
             this.sprite.scale.setTo(-1, 1);
         } else {
