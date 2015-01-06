@@ -13,7 +13,7 @@
     });
 
     socket.on('connect', function () {
-        game = new Phaser.Game(400, 400, Phaser.AUTO, 'phaser-app', {
+        game = new Phaser.Game(600, 600, Phaser.AUTO, 'phaser-app', {
             preload: preload,
             create: create,
             update: update,
@@ -59,11 +59,18 @@
         };
     };
 
+    Skeleton.prototype.fight = function (skeleton1, skeleton2) {
+        return function () {
+            skeleton1.health--;
+            skeleton2.health--;
+        };
+    };
+
     Skeleton.prototype.update = function () {
         for (var id in players) {
             var skeleton = players[id];
             if (!skeleton || id == myId) continue;
-            this.game.physics.arcade.collide(this.sprite, skeleton.sprite);
+            this.game.physics.arcade.collide(this.sprite, skeleton.sprite, this.fight(this, skeleton));
         }
 
         var radians = this.game.physics.arcade.moveToXY(this.sprite, this.toX, this.toY, 200);
@@ -71,10 +78,9 @@
         this.healthbar.y = this.sprite.y - 45;
         this.healthbar.width = this.health;
 
-        if (this.health > 0) {
-            this.health--;
-        } else {
-            this.health = 100;
+        if (this.health < 0) {
+            this.sprite.kill();
+            this.healthbar.destroy();
         }
 
         if (-1.5 < radians && radians < 1.5) {
